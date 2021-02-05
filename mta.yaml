@@ -1,16 +1,43 @@
 ID: cloudmta1
 _schema-version: '2.1'
 version: 0.0.1
-
 modules:
- - name: clouddbmodule1
-   type: hdb
-   path: clouddbmodule1
-   requires:
-    - name: hdi_clouddbmodule1
-
+  - name: clouddbmodule1
+    type: hdb
+    path: clouddbmodule1
+    requires:
+      - name: hdi_clouddbmodule1
+        properties:
+          TARGET_CONTAINER: '~{hdi-container-name}'
+      - name: cross-container-service-1
+        group: SERVICE_REPLACEMENTS
+        properties:
+          key: ServiceName_1
+          service: '~{the-service-name}'
+  - name: cloudmta1_nodejs
+    type: nodejs
+    path: cloudmta1_nodejs
+    provides:
+      - name: cloudmta1_nodejs_api
+        properties:
+          url: '${default-url}'
+    requires:
+      - name: hdi_clouddbmodule1
+      - name: jobscheduler
 resources:
- - name: hdi_clouddbmodule1
-   properties:
-      hdi-container-name: ${service-name}
-   type: com.sap.xs.hdi-container
+  - name: hdi_clouddbmodule1
+    properties:
+      hdi-container-name: '${service-name}'
+    type: com.sap.xs.hdi-container
+  - name: cross-container-service-1
+    parameters:
+      service-name: cloudmta1-hdiclouddbmodule1-I35238BHiSp+bh04bGj2DV
+    properties:
+      the-service-name: '${service-name}'
+    type: org.cloudfoundry.existing-service
+  - name: jobscheduler
+    type: com.sap.xs.job-scheduler
+  - name: cloudmta1_nodejs_uaa
+    type: com.sap.xs.uaa-space
+    parameters:
+      path: xs-security.json

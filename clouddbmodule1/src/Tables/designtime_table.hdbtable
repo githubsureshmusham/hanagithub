@@ -1,0 +1,4 @@
+COLUMN TABLE "cloudmta1.clouddbmodule1.Tables::designtimeimporttable" (
+	"ID" NVARCHAR(100),
+	"FIRSTNAME" NVARCHAR(100)
+)
